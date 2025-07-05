@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 class AntennaArray:
     def __init__(self, *args):
@@ -16,7 +17,7 @@ class AntennaArray:
         return str(self.antennas)
     
 
-    def get_pattern(self, azimuth, elevation):
+    def getPattern(self, azimuth, elevation):
         # TODO all of this is completely wrong, fix it
         azimuth_grid, elevation_grid = np.meshgrid(azimuth, elevation)
         u_grid = np.sin(azimuth_grid / 180 * np.pi)
@@ -57,6 +58,3 @@ class Antenna:
     
     def __repr__(self):
         return f"Antenna ({self.pos[0]}, {self.pos[1]}, {self.pos[2]})"
-
-ar = rectangularArray(2, 2, 0.5)
-print(10*np.log10(np.abs(ar.get_pattern(np.linspace(0, np.pi, num=50), (0)))))
