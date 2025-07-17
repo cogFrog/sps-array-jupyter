@@ -10,6 +10,7 @@ class AntennaArray:
             positions (nparray(N, 3)): 2D array representing position of all antennas in wavelengths. Each row is an antenna position [x, y, z]
             excitations (nparray(N)): Array of complex #s representing excitation of each antenna. If None, defaults to all 1's
         """
+        positions = np.atleast_2d(positions)
 
         if len(positions.shape) != 2:
             raise ValueError(f'Expected 2D nparray, found {len(positions.shape)}D nparray')
@@ -19,7 +20,11 @@ class AntennaArray:
 
         if excitations is None:
             excitations = np.ones(positions.shape[0])
-        elif positions.shape[0] != excitations.shape[0]:
+        else:
+            excitations = np.atleast_1d(excitations)
+        
+        if positions.shape[0] != excitations.shape[0]:
+            print(f'{positions.shape} and {excitations.shape}')
             raise ValueError(f'Expected positions and excitations to have same number of rows (antennas), found {positions.shape[0]} and {excitations.shape[0]} rows')
         self.excitations = excitations
 
@@ -29,34 +34,39 @@ class AntennaArray:
     def empty(self):
         """Initialize an empty antenna array
         """
-        return self(np.array((0,3)))
+        return self(np.empty([0,3]))
     
-    def append(self, position, excitation=None):
+    def append(self, positions, excitations=None):
         """Append a single antenna's position and excitation
 
         Args:
-            position (nparray(n,3)): Array represention position [x, y, z] in wavelengths (can be any number of rows)
-            excitation (nparray, optional): Complex number representing the excitation of the antenna. Defaults to None.
+            positions (nparray(n,3)): 1D or 2D array representing antenna positions to add. Each row is an antenna position [x, y, z]
+            excitations (nparray, optional): Array of complex numbers representing the excitation of the antennas. Defaults to all 1's.
         """
-        self.positions = np.vstack((self.positions, position))
+        positions = np.atleast_2d(positions)
 
-        # TODO update this so it can handle appending multiple antennas at the same time
-        if excitation is None:
-            excitation = np.array([1])
-        self.excitations = np.hstack((self.excitations, np.array(excitation)))
+        self.positions = np.vstack((self.positions, positions))
 
-    def __repr__(self):
-        return str(self.antennas)
+        if excitations is None:
+            excitations = np.ones(positions.shape[0])
+        else:
+            excitations = np.atleast_1d(excitations)
+
+        if positions.shape[0] != excitations.shape[0]:
+            print(f'{positions.shape} and {excitations.shape}')
+            raise ValueError(f'Expected positions and excitations to have same number of rows (antennas), found {positions.shape[0]} and {excitations.shape[0]} rows')
+        self.excitations = np.hstack((self.excitations, excitations))
+
+    # TODO make something that looks pretty
+    #def __repr__(self):
 
     def arrayFactor(self, azimuth, elevation):
         """The most general form of the array factor calculation. No assumptions about the array or
            the range of azimuth/elevations is made.
 
-           AF()
-
         Args:
-            azimuth (float): _description_
-            elevation (float): _description_
+            azimuth (nparray): Array of azimuth angles to test ind degrees
+            elevation (float): Array of elevation angles to test in degrees
 
         Returns:
             nparray: _description_
