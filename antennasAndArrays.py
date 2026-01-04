@@ -71,14 +71,17 @@ class AntennaArray:
         Returns:
             nparray: _description_
         """
-        # TODO all of this is completely wrong, fix it
+        # create pairs of every theta/phi combination
         theta_grid, phi_grid = np.meshgrid(np.radians(theta), np.radians(phi))
         
-        # ignoring this for now. try it later
+        # Calculate wavenumber (in 3D) for every theta/phi combination
         k = 2*np.pi*np.array([np.sin(theta_grid)*np.cos(phi_grid), np.sin(theta_grid)*np.sin(phi_grid), np.cos(theta_grid)])
+        k = np.transpose(k, axes=[1,2,0]) # TODO: find way so it's shaped this way by default
 
-        AF = np.zeros(np.shape(u_grid), dtype=complex)
+        r = np.transpose(self.positions) # TODO update so positions is constructed this way by default
 
-        return np.transpose(AF)
+        af = np.dot(np.exp(-1j * np.dot(k, r)), self.excitations)
+
+        return af
 
 # TODO add more array variants (rectanglular array, circular array, sparce arrays, different simplifications)
