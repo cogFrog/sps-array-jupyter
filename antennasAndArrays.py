@@ -60,26 +60,24 @@ class AntennaArray:
     # TODO make something that looks pretty
     #def __repr__(self):
 
-    def arrayFactor(self, azimuth, elevation):
+    def arrayFactor(self, theta, phi):
         """The most general form of the array factor calculation. No assumptions about the array or
-           the range of azimuth/elevations is made.
+           the range of thetas/phis is made.
 
         Args:
-            azimuth (nparray): Array of azimuth angles to test ind degrees
-            elevation (float): Array of elevation angles to test in degrees
+            theta (nparray): Array of theta angles to test in degrees
+            phi (float): Array of phi angles to test in degrees
 
         Returns:
             nparray: _description_
         """
         # TODO all of this is completely wrong, fix it
-        azimuth_grid, elevation_grid = np.meshgrid(azimuth, elevation)
-        u_grid = np.sin(azimuth_grid / 180 * np.pi)
-        v_grid = np.sin(elevation_grid/180*np.pi)
+        theta_grid, phi_grid = np.meshgrid(np.radians(theta), np.radians(phi))
+        
+        # ignoring this for now. try it later
+        k = 2*np.pi*np.array([np.sin(theta_grid)*np.cos(phi_grid), np.sin(theta_grid)*np.sin(phi_grid), np.cos(theta_grid)])
 
         AF = np.zeros(np.shape(u_grid), dtype=complex)
-
-        for antenna in self.antennas:
-            AF = AF + np.exp(-1j * 2 * np.pi * (antenna.x()*u_grid + antenna.y()*v_grid))
 
         return np.transpose(AF)
 
