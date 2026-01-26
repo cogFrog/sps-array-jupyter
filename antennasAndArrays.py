@@ -75,12 +75,12 @@ class AntennaArray:
         theta_grid, phi_grid = np.meshgrid(np.radians(theta), np.radians(phi))
         
         # Calculate wavenumber (in 3D) for every theta/phi combination
-        k = 2*np.pi*np.array([np.sin(theta_grid)*np.cos(phi_grid), np.sin(theta_grid)*np.sin(phi_grid), np.cos(theta_grid)])
+        k = 2*np.pi*np.array([np.sin(theta_grid)*np.cos(phi_grid),
+                              np.sin(theta_grid)*np.sin(phi_grid),
+                              np.cos(theta_grid)])
         k = np.transpose(k, axes=[1,2,0]) # TODO: find way so it's shaped this way by default
 
-        r = np.transpose(self.positions) # TODO update so positions is constructed this way by default
-
-        af = np.dot(np.exp(-1j * np.dot(k, r)), self.excitations)
+        af = np.dot(np.exp(-1j * np.dot(k, self.positions.T)), self.excitations)
 
         return af
 
