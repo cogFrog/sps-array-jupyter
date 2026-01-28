@@ -19,23 +19,31 @@ class AntennaArray:
         self.positions = positions
 
         if excitations is None:
-            excitations = np.ones(positions.shape[0])
+            self.excitations = np.ones(positions.shape[0])
         else:
-            excitations = np.atleast_1d(excitations)
+            self.excitations = np.atleast_1d(excitations)
         
-        if positions.shape[0] != excitations.shape[0]:
-            print(f'{positions.shape} and {excitations.shape}')
+        if positions.shape[0] != self.excitations.shape[0]:
+            print(f'{positions.shape} and {self.excitations.shape}')
             raise ValueError(f'Expected positions and excitations to have same number of rows (antennas), found {positions.shape[0]} and {excitations.shape[0]} rows')
-        self.excitations = excitations
-
-        # TODO add an antenna object that can describe the antenna properties such as antenna rad pattern?
     
     @classmethod
     def empty(self):
         """Initialize an empty antenna array
         """
         return self(np.empty([0,3]))
-    
+
+    @classmethod
+    def uniformRectArray(self, xSize, ySize, spacing):
+        """Initialize a rectangular antenna array
+        """
+        xVals = np.arange(xSize) * spacing
+        yVals = np.arange(ySize) * spacing
+        x, y = np.meshgrid(xVals, yVals)
+        pain = np.vstack([x.ravel(), y.ravel(), np.zeros(xSize*ySize)])
+        print(pain.T)
+        return self(pain.T)
+
     def append(self, positions, excitations=None):
         """Append a single antenna's position and excitation
 
@@ -78,8 +86,9 @@ class AntennaArray:
         k = 2*np.pi*np.array([np.sin(theta_grid)*np.cos(phi_grid),
                               np.sin(theta_grid)*np.sin(phi_grid),
                               np.cos(theta_grid)])
-        k = np.transpose(k, axes=[1,2,0]) # TODO: find way so it's shaped this way by default
+        k = np.transpose(k, axes=[1,2,0])
 
+        # Calculate the AF itself (one big operation, using dot product to perform sum of products)
         af = np.dot(np.exp(-1j * np.dot(k, self.positions.T)), self.excitations)
 
         return af
