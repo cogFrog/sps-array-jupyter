@@ -40,9 +40,8 @@ class AntennaArray:
         xVals = np.arange(xSize) * spacing
         yVals = np.arange(ySize) * spacing
         x, y = np.meshgrid(xVals, yVals)
-        pain = np.vstack([x.ravel(), y.ravel(), np.zeros(xSize*ySize)])
-        print(pain.T)
-        return self(pain.T)
+        array = np.vstack([x.ravel(), y.ravel(), np.zeros(xSize*ySize)])
+        return self(array.T)
 
     def append(self, positions, excitations=None):
         """Append a single antenna's position and excitation
@@ -83,9 +82,9 @@ class AntennaArray:
         theta_grid, phi_grid = np.meshgrid(np.radians(theta), np.radians(phi))
         
         # Calculate wavenumber (in 3D) for every theta/phi combination
-        k = 2*np.pi*np.array([np.sin(theta_grid)*np.cos(phi_grid),
-                              np.sin(theta_grid)*np.sin(phi_grid),
-                              np.cos(theta_grid)])
+        k = 2*np.pi*np.array([np.sin(phi_grid)*np.cos(theta_grid),
+                              np.sin(phi_grid)*np.sin(theta_grid),
+                              np.cos(phi_grid)])
         k = np.transpose(k, axes=[1,2,0])
 
         # Calculate the AF itself (one big operation, using dot product to perform sum of products)
