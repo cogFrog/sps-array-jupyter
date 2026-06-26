@@ -1,14 +1,19 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from antennasAndArrays import AntennaArray
+from time import perf_counter
 
-ar = AntennaArray.uniformRectArray(4, 4, 0.5)
+ar = AntennaArray.uniformRectArray(100, 100, 0.5)
 
-theta = np.linspace(0, 360, num=361)
-phi = np.linspace(0, 180, num=181)
+theta = np.linspace(0, 360, num=181)
+phi = np.linspace(0, 180, num=91)
 theta_grid, phi_grid = np.meshgrid(np.radians(theta), np.radians(phi))
 
+start = perf_counter()
 radPat = np.abs(ar.arrayFactor(theta, phi)).get()
+stop = perf_counter()
+
+print(stop-start)
 
 #scaledRadPat = 10*np.log10(radPat)
 
