@@ -8,9 +8,9 @@ theta = np.linspace(0, 360, num=361)
 phi = np.linspace(0, 180, num=181)
 theta_grid, phi_grid = np.meshgrid(np.radians(theta), np.radians(phi))
 
-radPat = np.abs(ar.arrayFactor(theta, phi))
+radPat = np.abs(ar.arrayFactor(theta, phi)).get()
 
-scaledRadPat = 10*np.log10(radPat)
+#scaledRadPat = 10*np.log10(radPat)
 
 x = radPat*np.sin(phi_grid)*np.cos(theta_grid)
 y = radPat*np.sin(phi_grid)*np.sin(theta_grid)
